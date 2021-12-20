@@ -1,0 +1,31 @@
+  version: '3'
+    
+  services:
+    ebanx:
+      build: .
+      #command: python manage.py runserver 0.0.0.0:8000
+      volumes:
+        - .:/code
+      ports:
+        - "8001:8001"
+      stdin_open: true
+      tty: true
+      depends_on:
+        - db
+
+    db:
+      image: 'bitnami/mysql:latest'
+      container_name: db
+      environment:
+        - ALLOW_EMPTY_PASSWORD=yes
+        - MYSQL_USER=admin
+        - MYSQL_PASSWORD=admin
+        - MYSQL_DATABASE=ebanx
+        - MYSQL_AUTHENTICATION_PLUGIN=mysql_native_password
+      volumes:
+        - ./mysql-data:/bitnami/mysql/data
+      ports:
+        - "3306:3306"
+
+  volumes:
+    mysql-data:
