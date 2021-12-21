@@ -17,9 +17,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from accounts.api.router import router_accounts
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path(settings.API_VERSION, include(router_accounts.urls)),
+    path(settings.API_VERSION, include('accounts.api.router')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

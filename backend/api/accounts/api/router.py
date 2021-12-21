@@ -1,7 +1,8 @@
-from rest_framework.routers import DefaultRouter
 from accounts.api.views.accounts import *
+from django.urls import path
 
-router_accounts = DefaultRouter()
 
-router_accounts.register(prefix='event', basename='event', viewset=AccountsEventModelViewSet)
-# router_accounts.register(prefix='event', basename='event', viewset=CatLanguagesModelViewSet)
+urlpatterns = [
+    path('event/', account_list),
+    #  path('language/<uuid:id>', views.language_detail),
+]
