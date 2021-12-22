@@ -7,6 +7,8 @@ from rest_framework import status
 from core.pagination import CustomPagination
 import json
 from django.db.models import Q
+from django.db.models import Sum
+
 
 @api_view(['GET', 'POST'])
 def account_list(request):
@@ -31,20 +33,36 @@ def account_list(request):
         return paginator.get_paginated_response(serializer.data)
 
     elif request.method == 'POST':
-        destination = request.data['destination']
-        amount = request.data['amount']
-        request.data['id'] = int(destination)
-        del request.data['destination']
-        try:
-            account = Accounts.objects.get(pk=destination)
-            request.data['amount'] = int(account.amount) + int(amount)
-            serializer = AccountsSerializer(account, data=request.data)
-        except Accounts.DoesNotExist:
-            serializer = AccountsSerializer(data=request.data)
+        serializer = AccountsSerializer(data=request.data)
+        amount = 0
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse({"destination": {"id":serializer.data['id'], "balance":serializer.data['amount']}}, status=status.HTTP_201_CREATED)
+            try:
+                account = Accounts.objects.filter(destination=serializer.data['destination']).aggregate(Sum('amount'))
+                serializer.data['amount'] = account['amount__sum']
+                amount = account['amount__sum']
+            except Accounts.DoesNotExist:
+                amount = serializer.data['amount']
+            print(serializer.data)
+            return JsonResponse({"destination": {"id":serializer.data['destination'], "balance":int(amount)}}, status=status.HTTP_201_CREATED)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_balance(request):
+    """
+    Get Balance by Account
+    """
+    account_id = request.GET.get('account_id', None)
+    account = Accounts.objects.filter(destination=account_id)
+    deposit = 0
+    if len(account) > 0:
+        for item in account.iterator():
+            deposit = deposit + int(item.amount)
+    else:
+        return HttpResponse(deposit, status=404)
+    if request.method == 'GET':
+        # serializer = AccountsSerializer(account)
+        return HttpResponse(deposit, status=status.HTTP_200_OK)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def tax_detail(request, id):
