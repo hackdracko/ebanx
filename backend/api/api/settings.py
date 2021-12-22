@@ -15,7 +15,7 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-API_VERSION = 'api/v1/'
+API_VERSION = ''
 
 
 # Quick-start development settings - unsuitable for production
@@ -27,8 +27,11 @@ SECRET_KEY = '^o-qqp3p*kj9wfc(f)j09c^vrhttqll9g7tuem*im344tr2^c('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '3840-187-131-102-54.ngrok.io'
+]
 
+APPEND_SLASH=False
 
 # Application definition
 
