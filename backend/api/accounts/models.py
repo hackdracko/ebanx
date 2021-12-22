@@ -10,4 +10,5 @@ class Accounts(models.Model):
 
     type = models.CharField(max_length=20)
     amount = models.CharField(max_length=5)
+    origin = models.CharField(max_length=3)
     destination = models.CharField(max_length=3)
